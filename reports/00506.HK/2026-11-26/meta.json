@@ -1,0 +1,58 @@
+{
+  "code": "00506.HK",
+  "name": "中国食品",
+  "as_of": "2026-11-26",
+  "period": "FY2025",
+  "documents": [
+    {
+      "file": "company-analysis.md",
+      "sections": [
+        "一页纸",
+        "生意拆解",
+        "行业与竞争位次",
+        "会计质量体检",
+        "财务表现与回报",
+        "治理与股东回报",
+        "费用与研发",
+        "风险与跟踪清单"
+      ]
+    },
+    {
+      "file": "valuation.md",
+      "sections": [
+        "一页纸",
+        "能不能估值",
+        "历史基本面还原",
+        "三法交叉",
+        "假设与敏感性",
+        "情景与概率加权",
+        "结论与纪律"
+      ]
+    }
+  ],
+  "charts": [
+    {
+      "path": "assets/revenue-profit.png",
+      "title": "收入与利润：增长的含金量如何"
+    },
+    {
+      "path": "assets/margin-trend.png",
+      "title": "三率趋势：盈利能力在变好还是变差"
+    },
+    {
+      "path": "assets/cash-quality.png",
+      "title": "净现比：利润有没有变成钱"
+    },
+    {
+      "path": "assets/expense-mix.png",
+      "title": "三项费用：钱花在渠道、管理还是研发"
+    }
+  ],
+  "evidence_count": 215,
+  "gap_count": 202,
+  "red_flags": {
+    "triggered": 0,
+    "insufficient": 20,
+    "total": 33
+  }
+}
