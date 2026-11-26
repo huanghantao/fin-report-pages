@@ -1,0 +1,21 @@
+name: no-leak
+
+# 公开仓的最后一道防线：即使发布环节漏了，也不让机器信息进入仓库历史。
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 扫描绝对路径、密钥与内部编号
+        run: |
+          set -eu
+          if grep -rInE '(/Users/|/home/[a-z]|\$HOME|file://|IWENCAI_API_KEY|X-Claw-Trace-Id|trace_id)' \
+               --include='*.md' --include='*.json' --include='*.yml' . ; then
+            echo "发现疑似敏感内容，构建失败。"; exit 1
+          fi
+          echo "无敏感内容。"

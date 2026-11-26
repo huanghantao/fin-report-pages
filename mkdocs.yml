@@ -1,0 +1,22 @@
+site_name: 财报研究（公开版）
+site_description: 由私有流水线生成并脱敏的财报分析与估值报告
+docs_dir: reports
+use_directory_urls: true
+
+theme:
+  name: material
+  language: zh
+  features:
+    - navigation.instant
+    - navigation.top
+    - content.code.copy
+    - search.suggest
+
+markdown_extensions:
+  - tables
+  - attr_list
+  - toc:
+      permalink: true
+
+nav:
+  - 报告索引: index.md

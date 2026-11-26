@@ -1,0 +1,25 @@
+name: link-check
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 检查仓内相对链接可达
+        run: |
+          set -eu
+          python3 - <<'PY'
+          import pathlib, re, sys
+          bad = []
+          for md in pathlib.Path("reports").rglob("*.md"):
+              for target in re.findall(r"\\]\\(([^)#]+\\.md)\\)", md.read_text(encoding="utf-8")):
+                  if not (md.parent / target).exists():
+                      bad.append(f"{md}: {target}")
+          print("\\n".join(bad) if bad else "所有相对链接可达。")
+          sys.exit(1 if bad else 0)
+          PY
