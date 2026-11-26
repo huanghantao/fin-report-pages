@@ -1,5 +1,5 @@
-site_name: 财报研究（公开版）
-site_description: 由私有流水线生成并脱敏的财报分析与估值报告
+site_name: 财报研究
+site_description: 公司财报分析与估值报告
 docs_dir: reports
 use_directory_urls: true
 
