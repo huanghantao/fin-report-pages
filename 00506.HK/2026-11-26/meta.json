@@ -1,0 +1,64 @@
+{
+  "code": "00506.HK",
+  "name": "中国食品",
+  "as_of": "2026-11-26",
+  "period": "FY2025",
+  "documents": [
+    {
+      "file": "company-analysis.md",
+      "sections": [
+        "一页纸",
+        "生意：钱是怎么赚的",
+        "五年账",
+        "利润表：从毛利到归母",
+        "资产负债表：钱在哪、欠谁",
+        "现金流量表：利润变成了什么",
+        "附注深挖",
+        "谁在分钱",
+        "红旗与跟踪清单"
+      ]
+    }
+  ],
+  "charts": [
+    {
+      "path": "assets/revenue-profit.png",
+      "title": "收入与利润：增长的含金量如何"
+    },
+    {
+      "path": "assets/margin-trend.png",
+      "title": "三率趋势：盈利能力在变好还是变差"
+    },
+    {
+      "path": "assets/cash-quality.png",
+      "title": "净现比：利润有没有变成钱"
+    },
+    {
+      "path": "assets/expense-mix.png",
+      "title": "三项费用：钱花在渠道、管理还是研发"
+    },
+    {
+      "path": "assets/turnover-days.png",
+      "title": "周转天数：公司的钱被谁占着"
+    }
+  ],
+  "reading": {
+    "chunks": 0,
+    "chunks_read": 0,
+    "pages": 0,
+    "pages_read": 0,
+    "claims": 0,
+    "judgements": 0,
+    "questions": 0
+  },
+  "notes": {
+    "topics": 37,
+    "selected": 5
+  },
+  "evidence_count": 208,
+  "gap_count": 202,
+  "red_flags": {
+    "triggered": 0,
+    "insufficient": 20,
+    "total": 32
+  }
+}
