@@ -1,20 +1,57 @@
 name: build
 
+# 站点由 Astro 构建，产物直接进 Pages。
+#
+# 与之前用 MkDocs 时的一处关键区别：不再 `gh-deploy` 往 gh-pages 分支推备份，
+# 而是走官方的 Pages artifact 上传。这样 main 分支是唯一的真相来源，
+# 构建产物不进版本历史（一份报告 300KB 图 + 15 万字，进 git 历史会越滚越大）。
 on:
   push:
     branches: [main]
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
 jobs:
-  pages:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+
+      - uses: actions/setup-node@v4
         with:
-          python-version: '3.12'
-      - run: pip install mkdocs-material
-      - run: mkdocs gh-deploy --force
+          # Astro 5.18 要求 node >= 22.23.4；写死主版本会被 runner 的旧 22.x 坑到。
+          node-version: '22.23.4'
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+
+      - name: 安装依赖
+        working-directory: site
+        run: npm ci
+
+      - name: 构建
+        working-directory: site
+        run: npm run build
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

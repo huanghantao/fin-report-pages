@@ -1,5 +1,7 @@
 name: link-check
 
+# 报告之间的相对链接：索引页指向每一份报告，报告之间互不引用。
+# 目录结构变了（比如快照日改了）而索引没跟上，这里会先炸，不用等读者点开才发现 404。
 on:
   push:
     branches: [main]
@@ -10,16 +12,44 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: 检查仓内相对链接可达
+      - name: 检查报告目录与 meta.json 对得上
         run: |
           set -eu
           python3 - <<'PY'
-          import pathlib, re, sys
+          import json, pathlib, sys
+
           bad = []
-          for md in pathlib.Path("reports").rglob("*.md"):
-              for target in re.findall(r"\\]\\(([^)#]+\\.md)\\)", md.read_text(encoding="utf-8")):
-                  if not (md.parent / target).exists():
-                      bad.append(f"{md}: {target}")
-          print("\\n".join(bad) if bad else "所有相对链接可达。")
-          sys.exit(1 if bad else 0)
+          reports = sorted(pathlib.Path("reports").glob("*/*/meta.json"))
+          if not reports:
+              print("reports/ 下没有任何报告", file=sys.stderr)
+              sys.exit(1)
+
+          for meta_path in reports:
+              folder = meta_path.parent
+              meta = json.loads(meta_path.read_text(encoding="utf-8"))
+
+              # 目录名必须是 <代码>/<快照日>，和 meta 里的两个字段一致。
+              # 写错的话站点路由会生成一个与索引对不上的地址。
+              if folder.parent.name != meta.get("code"):
+                  bad.append(f"{meta_path}: 目录代码 {folder.parent.name} != meta.code {meta.get('code')}")
+              if folder.name != meta.get("as_of"):
+                  bad.append(f"{meta_path}: 目录日期 {folder.name} != meta.as_of {meta.get('as_of')}")
+
+              for doc in meta.get("documents", []):
+                  name = doc.get("file")
+                  if name and not (folder / name).is_file():
+                      bad.append(f"{meta_path}: 少了 {name}")
+                  for section in doc.get("sections", []):
+                      if not str(section).strip():
+                          bad.append(f"{meta_path}: documents 里有空章节名")
+
+              for chart in meta.get("charts", []):
+                  path = chart.get("path")
+                  if path and not (folder / path).is_file():
+                      bad.append(f"{meta_path}: 图 {path} 不存在")
+
+          if bad:
+              print("\n".join(bad))
+              sys.exit(1)
+          print(f"{len(reports)} 份报告的目录、文档与图表都对得上。")
           PY

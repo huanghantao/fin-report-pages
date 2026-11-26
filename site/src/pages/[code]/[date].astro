@@ -1,0 +1,72 @@
+---
+/** 报告页：左侧正文、右侧粘性目录。正文由 Markdown 渲染，不在这里改一个字。 */
+import Base from "../../layouts/Base.astro";
+import { getCollection, render } from "astro:content";
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+export async function getStaticPaths() {
+  const reports = await getCollection("reports");
+  return reports.map((entry) => ({
+    params: { code: entry.data.code, date: entry.data.asOf },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { code, name, asOf, period, sections, redFlags, reading, topics, evidenceCount, gapCount } =
+  entry.data;
+const { Content, headings } = await render(entry);
+
+// 目录只取二级与三级标题：九节 + 若干子节，再多读者也找不到东西。
+const toc = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
+---
+
+<Base
+  title={`${name}（${code}）${period.slice(2)} 年报深度解读`}
+  description={`${name} ${period} 年报深度解读：逐页读原文、挖附注、留台账。`}
+>
+  <article class={`report`}>
+    <div>
+      <header class="report__head">
+        <div class="report__code">{code}</div>
+        <h1 class="report__title">{name} · {period.slice(2)} 年报深度解读</h1>
+        <div class="report__lede">数据快照日 {asOf}</div>
+        <div class="report__badges">
+          {
+            reading.pages > 0 && <span class="badge">{reading.pages} 页读完</span>
+          }
+          {
+            reading.judgements > 0 && <span class="badge">{reading.judgements} 条判断</span>
+          }
+          <span class="badge">{topics} 个附注专题</span>
+          <span class="badge">{evidenceCount} 条证据</span>
+          {
+            redFlags.triggered > 0 ? (
+              <span class="badge badge--accent">红旗命中 {redFlags.triggered} 项</span>
+            ) : (
+              <span class="badge">红旗未命中</span>
+            )
+          }
+          {gapCount > 0 && <span class="badge">数据缺口 {gapCount} 个</span>}
+        </div>
+      </header>
+      <div class="prose">
+        <Content />
+      </div>
+    </div>
+
+    <nav class="toc" aria-label="目录">
+      <p class="toc__title">目录</p>
+      <ol>
+        {
+          toc.map((heading) => (
+            <li class={heading.depth === 3 ? "is-sub" : ""}>
+              <a href={`#${heading.slug}`}>{heading.text}</a>
+            </li>
+          ))
+        }
+      </ol>
+    </nav>
+  </article>
+</Base>

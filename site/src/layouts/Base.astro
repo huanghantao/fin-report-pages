@@ -1,0 +1,46 @@
+---
+/** 站点外壳：头部、页脚、全局样式。 */
+import "../styles/global.css";
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+const { title, description } = Astro.props;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content={new URL(Astro.url.pathname, Astro.site)} />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23c2410c'/%3E%3Cpath d='M9 22V10h3.2l3.4 6.1L19 10h3.2v12h-2.9v-7.3L16.3 21h-1.9l-3-6.3V22z' fill='%23fbf9f6'/%3E%3C/svg%3E"
+    />
+    <slot name="head" />
+  </head>
+  <body>
+    <header class="masthead">
+      <div class="masthead__inner">
+        <a class="masthead__brand" href={`${base}/`}>财报研究</a>
+        <span class="masthead__note">逐页读原文 · 挖附注 · 留台账</span>
+      </div>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer class="footer">
+      <div class="footer__inner">
+        <span>数据来自上市公司公告原文；内容仅供研究学习，不构成投资建议。</span>
+        <span>
+          <a href="https://github.com/huanghantao/fin-report-pages">源码</a>
+        </span>
+      </div>
+    </footer>
+  </body>
+</html>

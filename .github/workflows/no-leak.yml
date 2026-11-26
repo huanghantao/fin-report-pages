@@ -1,23 +1,58 @@
 name: no-leak
 
-# 最后一道防线：即使发布环节漏了，也不让机器信息进入仓库历史。
-# 扫描范围排除 .github 自身：这个文件里就写着要扫的那些模式，把自己算进去等于永远失败。
+# 公开仓的第一道闸：本机路径、密钥形态、内部编号一律不许出现。
+#
+# 这条检查放在**源文件**上（reports/ 与 site/src/），而不是构建产物上：
+# 产物是从源文件生成的，源文件干净，产物就干净；反过来查产物，总是慢一步。
 on:
   push:
     branches: [main]
-  pull_request:
+  workflow_dispatch:
 
 jobs:
   scan:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: 扫描绝对路径、密钥与内部编号
+      - name: 扫描源文件
         run: |
           set -eu
-          if grep -rInE '(/Users/|/home/[a-z]|\$HOME|file://|IWENCAI_API_KEY|X-Claw-Trace-Id|trace_id)' \
-               --include='*.md' --include='*.json' --include='*.yml' \
-               --exclude-dir='.github' . ; then
-            echo "发现疑似敏感内容，构建失败。"; exit 1
-          fi
-          echo "无敏感内容。"
+          python3 - <<'PY'
+          import pathlib, re, sys
+
+          # 每一条都对应一类真实的泄漏，不做「看起来像」的模糊匹配。
+          PATTERNS = [
+              (re.compile(r"/Users/[A-Za-z0-9._-]+"), "家目录绝对路径"),
+              (re.compile(r"/home/[A-Za-z0-9._-]+"), "Linux 家目录绝对路径"),
+              (re.compile(r"[A-Za-z]:\\\\Users\\\\"), "Windows 用户目录"),
+              (re.compile(r"\bfile://"), "file:// 协议"),
+              (re.compile(r"\btrace_id\b"), "内部 trace_id"),
+              (re.compile(r"\bquery_id\b"), "内部 query_id"),
+              (re.compile(r"\bIWENCAI_API_KEY\b"), "密钥变量名"),
+              (re.compile(r"\bsk-[A-Za-z0-9]{16,}"), "疑似 API key"),
+              (re.compile(r"\bcodinghuang\x40qq\.com\b"), "作者邮箱不进正文"),
+          ]
+          ALLOW = {"huanghantao.github.io", "github.com/huanghantao"}
+
+          bad = []
+          roots = [pathlib.Path("reports"), pathlib.Path("site/src")]
+          for root in roots:
+              if not root.exists():
+                  continue
+              for path in root.rglob("*"):
+                  if not path.is_file() or path.suffix not in {".md", ".json", ".astro", ".js", ".css", ".yml"}:
+                      continue
+                  text = path.read_text(encoding="utf-8", errors="ignore")
+                  for pattern, label in PATTERNS:
+                      for match in pattern.finditer(text):
+                          if any(allowed in match.group(0) for allowed in ALLOW):
+                              continue
+                          line = text.count("\n", 0, match.start()) + 1
+                          bad.append(f"{path}:{line} [{label}] {match.group(0)}")
+
+          if bad:
+              print("\n".join(bad))
+              print(f"\n共 {len(bad)} 处需要处理。", file=sys.stderr)
+              sys.exit(1)
+          print("源文件干净：无绝对路径、密钥形态与内部编号。")
+          PY

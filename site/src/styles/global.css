@@ -1,0 +1,602 @@
+/* 财经暖调：暖白底 + 橙红强调 + 黑体标题 + 等宽数字。
+ *
+ * 三件事决定了这套样式的取舍：
+ *   1. 报告里表格极多（每份 100+ 行），表格的可读性优先于装饰；
+ *   2. 数字要能竖着比大小，所以一律 tabular-nums、右对齐；
+ *   3. 正文是长文，行宽收在 42em 左右——中文一行超过 40 字就开始跳行。
+ */
+
+@font-face {
+  font-family: "Report Serif";
+  src: local("Songti SC"), local("Noto Serif SC"), local("Source Han Serif SC");
+}
+
+:root {
+  --bg: #fbf9f6;
+  --bg-raised: #ffffff;
+  --bg-sunken: #f4efe8;
+  --ink: #1c1917;
+  --ink-soft: #57534e;
+  --ink-faint: #8a8580;
+  --rule: #e3dbd0;
+  --rule-strong: #cdc2b3;
+  --accent: #c2410c;
+  --accent-soft: #fde8dd;
+  --accent-ink: #9a3412;
+  --good: #15803d;
+  --warn: #a16207;
+
+  --sans: "PingFang SC", "Noto Sans SC", "Source Han Sans SC", "Microsoft YaHei",
+    system-ui, -apple-system, "Segoe UI", sans-serif;
+  --serif: "Report Serif", "Songti SC", "Noto Serif SC", Georgia, serif;
+  --mono: "SF Mono", "JetBrains Mono", ui-monospace, Menlo, monospace;
+
+  --measure: 46rem;
+  /* 页面总宽 = 正文 + 间距 + 目录，再留一点边。收得比 78rem 紧一点，
+     两侧空白才不会多到像没对齐。 */
+  --page: 70rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  /* 目录是粘性的，锚点跳转要给它让出位置 */
+  scroll-padding-top: 6rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16.5px;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: var(--accent-ink);
+  text-decoration-color: color-mix(in srgb, var(--accent) 35%, transparent);
+  text-underline-offset: 0.2em;
+}
+
+a:hover {
+  text-decoration-color: var(--accent);
+}
+
+/* ── 站点头部 ─────────────────────────────────────────────── */
+
+.masthead {
+  border-bottom: 1px solid var(--rule);
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: saturate(140%) blur(8px);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.masthead__inner {
+  max-width: var(--page);
+  margin: 0 auto;
+  padding: 0.9rem 1.5rem;
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.masthead__brand {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.masthead__brand::before {
+  content: "";
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-right: 0.55rem;
+  border-radius: 50%;
+  background: var(--accent);
+  vertical-align: 0.12em;
+}
+
+.masthead__note {
+  color: var(--ink-faint);
+  font-size: 0.85rem;
+  margin-left: auto;
+}
+
+/* ── 首页 ─────────────────────────────────────────────────── */
+
+.hero {
+  max-width: var(--page);
+  margin: 0 auto;
+  padding: 4.5rem 1.5rem 2.5rem;
+}
+
+.hero__eyebrow {
+  font-size: 0.8rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 600;
+  margin: 0 0 1rem;
+}
+
+.hero__title {
+  font-family: var(--sans);
+  font-size: clamp(2rem, 4.5vw, 3rem);
+  line-height: 1.25;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin: 0 0 1.2rem;
+  max-width: 30ch;
+}
+
+.hero__lede {
+  font-family: var(--serif);
+  font-size: 1.12rem;
+  line-height: 1.85;
+  color: var(--ink-soft);
+  max-width: 40em;
+  margin: 0;
+}
+
+.hero__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2.5rem;
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--rule);
+}
+
+.stat__value {
+  font-family: var(--mono);
+  font-size: 1.6rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  display: block;
+  line-height: 1.2;
+}
+
+.stat__label {
+  font-size: 0.82rem;
+  color: var(--ink-faint);
+}
+
+.cards {
+  max-width: var(--page);
+  margin: 0 auto;
+  padding: 1rem 1.5rem 6rem;
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fill, minmax(24rem, 1fr));
+}
+
+.card {
+  display: block;
+  background: var(--bg-raised);
+  border: 1px solid var(--rule);
+  border-radius: 0.5rem;
+  padding: 1.6rem 1.7rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px -18px color-mix(in srgb, var(--accent) 60%, transparent);
+}
+
+.card__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.7rem;
+}
+
+.card__name {
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.card__code {
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.card__meta {
+  font-size: 0.85rem;
+  color: var(--ink-faint);
+  margin: 0 0 1.1rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.card__sections {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0 0 1.1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.card__sections li {
+  font-size: 0.76rem;
+  color: var(--ink-soft);
+  background: var(--bg-sunken);
+  border-radius: 0.25rem;
+  padding: 0.15rem 0.5rem;
+  white-space: nowrap;
+}
+
+.card__foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  font-size: 0.8rem;
+  color: var(--ink-faint);
+  border-top: 1px dashed var(--rule);
+  padding-top: 0.9rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.card__foot b {
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+.card__flag-hit {
+  color: var(--accent-ink);
+  font-weight: 600;
+}
+
+/* ── 报告页 ───────────────────────────────────────────────── */
+
+.report {
+  max-width: var(--page);
+  margin: 0 auto;
+  padding: 3rem 1.5rem 6rem;
+  display: grid;
+  grid-template-columns: minmax(0, var(--measure)) 15rem;
+  gap: 4rem;
+  justify-content: center;
+  align-items: start;
+}
+
+@media (max-width: 68rem) {
+  .report {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
+  }
+  .toc {
+    display: none;
+  }
+}
+
+.report__head {
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.6rem;
+  border-bottom: 2px solid var(--ink);
+}
+
+.report__code {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.report__title {
+  font-size: clamp(1.7rem, 3.4vw, 2.4rem);
+  line-height: 1.3;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+  margin: 0.5rem 0 0.9rem;
+}
+
+.report__lede {
+  font-size: 0.9rem;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.report__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1.1rem;
+}
+
+.badge {
+  font-size: 0.78rem;
+  padding: 0.22rem 0.6rem;
+  border-radius: 0.25rem;
+  border: 1px solid var(--rule-strong);
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.badge--accent {
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  font-weight: 600;
+}
+
+/* 目录 */
+
+.toc {
+  position: sticky;
+  top: 5.5rem;
+  border-left: 1px solid var(--rule);
+  padding-left: 1.2rem;
+  font-size: 0.85rem;
+  max-height: calc(100vh - 7rem);
+  overflow-y: auto;
+}
+
+.toc__title {
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin: 0 0 0.8rem;
+  font-weight: 600;
+}
+
+.toc ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.toc li {
+  margin: 0.35rem 0;
+}
+
+.toc a {
+  color: var(--ink-soft);
+  text-decoration: none;
+  display: block;
+  line-height: 1.45;
+}
+
+.toc a:hover {
+  color: var(--accent-ink);
+}
+
+.toc .is-sub {
+  padding-left: 0.9rem;
+  font-size: 0.8rem;
+  color: var(--ink-faint);
+}
+
+/* 正文：报告由 Markdown 渲染而来，样式全部落在这里 */
+
+.prose > :first-child {
+  margin-top: 0;
+}
+
+.prose h1 {
+  display: none; /* 标题已经由报告页头部渲染 */
+}
+
+.prose h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin: 3.2rem 0 1.2rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--rule);
+  scroll-margin-top: 5.5rem;
+}
+
+.prose h2::before {
+  content: "";
+  display: inline-block;
+  width: 0.42rem;
+  height: 0.42rem;
+  margin-right: 0.6rem;
+  border-radius: 50%;
+  background: var(--accent);
+  vertical-align: 0.18em;
+}
+
+.prose h3 {
+  font-size: 1.08rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+  margin: 2.2rem 0 0.9rem;
+  scroll-margin-top: 5.5rem;
+}
+
+.prose p {
+  margin: 0 0 1.15rem;
+  text-align: justify;
+  text-justify: inter-ideograph;
+}
+
+/* 每段开头的粗体判断句：整段的第一句就是结论，给它一点视觉重量 */
+.prose p > strong:first-child {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.prose strong {
+  font-weight: 650;
+}
+
+.prose ul,
+.prose ol {
+  margin: 0 0 1.2rem;
+  padding-left: 1.3rem;
+}
+
+.prose li {
+  margin: 0.35rem 0;
+}
+
+.prose hr {
+  border: none;
+  border-top: 1px solid var(--rule);
+  margin: 2.5rem 0;
+}
+
+.prose blockquote {
+  margin: 1.5rem 0;
+  padding: 0.2rem 0 0.2rem 1.2rem;
+  border-left: 3px solid var(--accent);
+  color: var(--ink-soft);
+}
+
+/* 表格：报告的主角。数字右对齐、等宽、单位不重复进单元格 */
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0 1.8rem;
+  font-size: 0.86rem;
+  font-variant-numeric: tabular-nums;
+  background: var(--bg-raised);
+  border: 1px solid var(--rule);
+  border-radius: 0.35rem;
+  overflow: hidden;
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.prose thead {
+  background: var(--bg-sunken);
+}
+
+.prose th {
+  font-weight: 650;
+  color: var(--ink-soft);
+  text-align: right;
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid var(--rule-strong);
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.prose th:first-child {
+  text-align: left;
+}
+
+.prose td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--rule);
+  text-align: right;
+  color: var(--ink);
+}
+
+.prose td:first-child {
+  text-align: left;
+  color: var(--ink-soft);
+  white-space: normal;
+  min-width: 9rem;
+}
+
+.prose tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.prose tbody tr:hover {
+  background: color-mix(in srgb, var(--accent-soft) 45%, transparent);
+}
+
+/* 图 */
+
+.prose img {
+  display: block;
+  /* 图表允许比正文宽一点：坐标轴与图例的字在 46rem 里会被压得很小 */
+  max-width: min(100%, 52rem);
+  height: auto;
+  margin: 2rem auto 0.6rem;
+  border: 1px solid var(--rule);
+  border-radius: 0.35rem;
+  background: var(--bg-raised);
+}
+
+.prose img + em {
+  display: block;
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--ink-faint);
+  font-style: normal;
+}
+
+/* 页脚 */
+
+.footer {
+  border-top: 1px solid var(--rule);
+  margin-top: 4rem;
+}
+
+.footer__inner {
+  max-width: var(--page);
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 3.5rem;
+  font-size: 0.82rem;
+  color: var(--ink-faint);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: space-between;
+}
+
+.footer a {
+  color: var(--ink-soft);
+}
+
+/* 打印：报告本来就是拿来读的 */
+
+@media print {
+  .masthead,
+  .toc,
+  .footer {
+    display: none;
+  }
+  body {
+    background: #fff;
+    font-size: 11pt;
+  }
+  .report {
+    display: block;
+    padding: 0;
+  }
+  .prose table {
+    white-space: normal;
+    display: table;
+  }
+  .prose h2 {
+    break-after: avoid;
+  }
+}

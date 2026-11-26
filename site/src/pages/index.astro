@@ -1,0 +1,99 @@
+---
+/** 卡片式索引：每份报告一张卡，卡片本身就说明「这份报告讲了什么」。 */
+import Base from "../layouts/Base.astro";
+import { getCollection } from "astro:content";
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+const reports = (await getCollection("reports")).sort(
+  (a, b) => b.data.asOf.localeCompare(a.data.asOf) || a.data.code.localeCompare(b.data.code),
+);
+
+// 首页的统计按「所有报告」汇总，而不是按份数平均——读者关心的是总量。
+//
+// 只汇总**真实存在**的数：阅读台账没建立时 ``reading.pages`` 是 0，那是「没测」而不是
+// 「读了 0 页」。把 0 摆到首页会让读者以为报告没读过年报，所以整项不出现。
+const totals = reports.reduce(
+  (acc, item) => ({
+    pages: acc.pages + (item.data.reading.pages || 0),
+    judgements: acc.judgements + (item.data.reading.judgements || 0),
+    evidence: acc.evidence + item.data.evidenceCount,
+    topics: acc.topics + item.data.topics,
+  }),
+  { pages: 0, judgements: 0, evidence: 0, topics: 0 },
+);
+
+const stats = [
+  { value: reports.length, label: "份报告", show: true },
+  { value: totals.pages, label: "页原文读过", show: totals.pages > 0 },
+  { value: totals.judgements, label: "条判断", show: totals.judgements > 0 },
+  { value: totals.topics, label: "个附注专题", show: totals.topics > 0 },
+  { value: totals.evidence, label: "条证据", show: totals.evidence > 0 },
+].filter((item) => item.show);
+---
+
+<Base
+  title="财报研究 · 年报深度解读"
+  description="逐页读完整份年报、深挖附注，留下可核对的阅读台账。"
+>
+  <section class="hero">
+    <p class="hero__eyebrow">年报深度解读</p>
+    <h1 class="hero__text hero__title">
+      不看主表给出的结论，看主表为什么长这样。
+    </h1>
+    <p class="hero__lede">
+      每份报告从年报原文出发：剥掉页眉页脚、按章节分配阅读预算、把三四十条附注按问题类型归类后挑出
+      五条写透。正文里每个数字都带页码，每页原文都有来源块——读完这件事是可以逐页核对的。
+    </p>
+    <div class="hero__stats">
+      {
+        stats.map((item) => (
+          <div class="stat">
+            <span class="stat__value">{item.value.toLocaleString("zh-CN")}</span>
+            <span class="stat__label">{item.label}</span>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="cards">
+    {
+      reports.map((item) => {
+        const { code, name, asOf, period, sections, redFlags, reading, topics } = item.data;
+        return (
+          <a class="card" href={`${base}/${item.id}/`}>
+            <div class="card__head">
+              <span class="card__name">{name || code}</span>
+              <span class="card__code">{code}</span>
+            </div>
+            <p class="card__meta">
+              {period} 年报 · 快照日 {asOf}
+            </p>
+            <ul class="card__sections">
+              {sections.slice(0, 9).map((section) => (
+                <li>{section}</li>
+              ))}
+            </ul>
+            <div class="card__foot">
+              {reading.pages > 0 && (
+                <span>
+                  <b>{reading.pages}</b> 页读完
+                </span>
+              )}
+              <span>
+                <b>{topics}</b> 个附注专题
+              </span>
+              <span>
+                <b>{sections.length}</b> 节
+              </span>
+              <span class={redFlags.triggered > 0 ? "card__flag-hit" : ""}>
+                红旗 <b>{redFlags.triggered}</b>/{redFlags.total}
+              </span>
+            </div>
+          </a>
+        );
+      })
+    }
+  </section>
+</Base>
