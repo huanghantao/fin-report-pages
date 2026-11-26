@@ -8,25 +8,14 @@
       "file": "company-analysis.md",
       "sections": [
         "一页纸",
-        "生意拆解",
-        "行业与竞争位次",
-        "会计质量体检",
-        "财务表现与回报",
-        "治理与股东回报",
-        "费用与研发",
-        "风险与跟踪清单"
-      ]
-    },
-    {
-      "file": "valuation.md",
-      "sections": [
-        "一页纸",
-        "能不能估值",
-        "历史基本面还原",
-        "三法交叉",
-        "假设与敏感性",
-        "情景与概率加权",
-        "结论与纪律"
+        "生意：钱是怎么赚的",
+        "五年账",
+        "利润表：从毛利到归母",
+        "资产负债表：钱在哪、欠谁",
+        "现金流量表：利润变成了什么",
+        "附注深挖",
+        "谁在分钱",
+        "红旗与跟踪清单"
       ]
     }
   ],
@@ -46,13 +35,30 @@
     {
       "path": "assets/expense-mix.png",
       "title": "三项费用：钱花在渠道、管理还是研发"
+    },
+    {
+      "path": "assets/turnover-days.png",
+      "title": "周转天数：公司的钱被谁占着"
     }
   ],
-  "evidence_count": 326,
+  "reading": {
+    "chunks": 0,
+    "chunks_read": 0,
+    "pages": 0,
+    "pages_read": 0,
+    "claims": 0,
+    "judgements": 0,
+    "questions": 0
+  },
+  "notes": {
+    "topics": 80,
+    "selected": 5
+  },
+  "evidence_count": 318,
   "gap_count": 86,
   "red_flags": {
     "triggered": 3,
     "insufficient": 17,
-    "total": 33
+    "total": 32
   }
 }
