@@ -1,5 +1,11 @@
 site_name: 财报研究
-site_description: 公司财报分析与估值报告
+site_description: 公司年报深度解读
+# 投影站点地址必须写成 <user>.github.io/<repo>/，路径就是仓库名。
+# 缺了它，MkDocs 生成的 sitemap.xml 是空的——每一页的绝对链接都无从推导。
+site_url: https://huanghantao.github.io/fin-report-pages/
+# 站点根路径同样来自仓库名；repo_url 让每页右上角有一个回到源码的入口。
+repo_url: https://github.com/huanghantao/fin-report-pages
+repo_name: huanghantao/fin-report-pages
 docs_dir: reports
 use_directory_urls: true
 
