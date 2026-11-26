@@ -1,6 +1,7 @@
 name: no-leak
 
 # 公开仓的最后一道防线：即使发布环节漏了，也不让机器信息进入仓库历史。
+# 扫描范围排除 .github 自身：这个文件里就写着要扫的那些模式，把自己算进去等于永远失败。
 on:
   push:
     branches: [main]
@@ -15,7 +16,8 @@ jobs:
         run: |
           set -eu
           if grep -rInE '(/Users/|/home/[a-z]|\$HOME|file://|IWENCAI_API_KEY|X-Claw-Trace-Id|trace_id)' \
-               --include='*.md' --include='*.json' --include='*.yml' . ; then
+               --include='*.md' --include='*.json' --include='*.yml' \
+               --exclude-dir='.github' . ; then
             echo "发现疑似敏感内容，构建失败。"; exit 1
           fi
           echo "无敏感内容。"
