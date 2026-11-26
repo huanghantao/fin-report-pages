@@ -7,7 +7,7 @@ as_of: "2026-11-26"
 data_source: "同花顺问财（年度报告口径）"
 red_flag_count: 2
 red_flag_high: 1
-finding_count: 2
+finding_count: 3
 ---
 # 伊利股份（600887.SH）公司分析
 
@@ -46,7 +46,7 @@ finding_count: 2
 | 资产负债率 | 52.15% | 58.66% | 62.19% | 62.91% | 61.51% |
 | 分红率 | 65.40% | 79.53% | 80.70% | 107.56% | 103.97% |
 
-红旗判定：清单共 33 项，命中 2 项，数据不足 21 项（数据不足不等于没问题）。
+红旗判定：清单共 33 项，命中 2 项，数据不足 20 项（数据不足不等于没问题）。
 
 | 严重度 | 红旗 | 状态 | 观测值 |
 | :--- | :--- | :--- | :--- |
@@ -76,6 +76,10 @@ finding_count: 2
 需要说明的是：**分品类的收入与毛利拆分本轮没有取数**（上游按合并口径返回，分部数据需要
 读年报附注），所以本报告对品类结构的描述是定性的。要把它做成可比的量化结论，需要在
 `taxonomy/upstream_fields.yaml` 里补分部字段，或增加一次附注读取。
+
+| 编号 | 严重度 | 判断 | 依据 | 证据 |
+| :--- | :--- | :--- | :--- | :--- |
+| F-cb-01 | 中 | 收入进入平台期 | FY2024→FY2025 收入增速 FY2024 -8.24%、FY2025 +0.21%，连续 2 期低于 1% | E-009、E-010 |
 
 ## 行业与竞争位次
 
@@ -230,7 +234,6 @@ finding_count: 2
 | 中 | 折旧率明显低于同业 | 数据不足 | 需人工核对（附注/公告原文） |
 | 中 | 有效税率异常 | 数据不足 | 需人工核对（附注/公告原文） |
 | 中 | PE 被一次性收益压低 | 数据不足 | 需人工核对（附注/公告原文） |
-| 中 | 隐含回报率过低（PB 相对 ROE 太贵） | 数据不足 | 净资产收益率 / 市净率 最近 1 期数据不全 |
 
 ## 财务表现与回报
 
@@ -313,6 +316,8 @@ finding_count: 2
 利率 1.49%。用不到两个月期限的钱，说明公司在**主动做负债结构管理**而非被动融资——这
 既解释了为什么有息负债里短债占比高达 98.98%，也说明当前融资成本极低。风险在于这个
 「极低」不稳定：一旦短端利率上行或发行受阻，续发压力会立刻显现。
+
+本次没有触发结构化判断。
 
 ### 分红方案
 
@@ -1059,25 +1064,25 @@ finding_count: 2
 
 | 指标 | 年度 | 原因 |
 | :--- | :--- | :--- |
-| credit_impairment | 2016 | upstream_field_missing |
-| credit_impairment | 2017 | upstream_field_missing |
-| fixed_assets | 2020 | upstream_field_missing |
-| fixed_assets | 2025 | upstream_field_missing |
-| construction_in_progress | 2016 | upstream_field_missing |
-| construction_in_progress | 2017 | upstream_field_missing |
-| construction_in_progress | 2018 | upstream_field_missing |
-| construction_in_progress | 2022 | upstream_field_missing |
-| construction_in_progress | 2023 | upstream_field_missing |
-| contract_liabilities | 2016 | upstream_field_missing |
-| contract_liabilities | 2017 | upstream_field_missing |
-| contract_liabilities | 2018 | upstream_field_missing |
-| contract_liabilities | 2019 | upstream_field_missing |
-| bonds_payable | 2016 | upstream_field_missing |
-| bonds_payable | 2017 | upstream_field_missing |
-| bonds_payable | 2018 | upstream_field_missing |
-| bonds_payable | 2022 | upstream_field_missing |
-| bonds_payable | 2023 | upstream_field_missing |
-| bonds_payable | 2024 | upstream_value_null |
-| bonds_payable | 2025 | upstream_value_null |
+| credit_impairment | 2016 | 上游未提供该字段 |
+| credit_impairment | 2017 | 上游未提供该字段 |
+| fixed_assets | 2020 | 上游未提供该字段 |
+| fixed_assets | 2025 | 上游未提供该字段 |
+| construction_in_progress | 2016 | 上游未提供该字段 |
+| construction_in_progress | 2017 | 上游未提供该字段 |
+| construction_in_progress | 2018 | 上游未提供该字段 |
+| construction_in_progress | 2022 | 上游未提供该字段 |
+| construction_in_progress | 2023 | 上游未提供该字段 |
+| contract_liabilities | 2016 | 上游未提供该字段 |
+| contract_liabilities | 2017 | 上游未提供该字段 |
+| contract_liabilities | 2018 | 上游未提供该字段 |
+| contract_liabilities | 2019 | 上游未提供该字段 |
+| bonds_payable | 2016 | 上游未提供该字段 |
+| bonds_payable | 2017 | 上游未提供该字段 |
+| bonds_payable | 2018 | 上游未提供该字段 |
+| bonds_payable | 2022 | 上游未提供该字段 |
+| bonds_payable | 2023 | 上游未提供该字段 |
+| bonds_payable | 2024 | 该科目当期无余额 |
+| bonds_payable | 2025 | 该科目当期无余额 |
 
 数据快照日 2026-11-26；上游查询 0 次，缓存命中 69 次；金额单位为亿元，比率为百分数点。
