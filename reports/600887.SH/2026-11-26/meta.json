@@ -13,6 +13,7 @@
         "会计质量体检",
         "财务表现与回报",
         "治理与股东回报",
+        "费用与研发",
         "风险与跟踪清单"
       ]
     },
@@ -41,13 +42,17 @@
     {
       "path": "assets/cash-quality.png",
       "title": "净现比：利润有没有变成钱"
+    },
+    {
+      "path": "assets/expense-mix.png",
+      "title": "三项费用：钱花在渠道、管理还是研发"
     }
   ],
-  "evidence_count": 687,
-  "gap_count": 20,
+  "evidence_count": 326,
+  "gap_count": 86,
   "red_flags": {
-    "triggered": 2,
-    "insufficient": 20,
+    "triggered": 3,
+    "insufficient": 17,
     "total": 33
   }
 }
