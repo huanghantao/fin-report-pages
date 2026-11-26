@@ -6,12 +6,12 @@
   "path": "reports/00506.HK/2026-11-26",
   "files": [
     "company-analysis.md",
-    "valuation.md",
     "meta.json",
     "assets/cash-quality.png",
     "assets/expense-mix.png",
     "assets/margin-trend.png",
-    "assets/revenue-profit.png"
+    "assets/revenue-profit.png",
+    "assets/turnover-days.png"
   ],
   "gates": {
     "G5": "pass"
