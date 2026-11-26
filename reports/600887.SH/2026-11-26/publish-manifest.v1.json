@@ -1,0 +1,15 @@
+{
+  "contract": "report-manifest.v1",
+  "code": "600887.SH",
+  "name": "伊利股份",
+  "as_of": "2026-11-26",
+  "path": "reports/600887.SH/2026-11-26",
+  "files": [
+    "company-analysis.md",
+    "valuation.md",
+    "meta.json"
+  ],
+  "gates": {
+    "G5": "pass"
+  }
+}

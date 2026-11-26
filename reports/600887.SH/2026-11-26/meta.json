@@ -1,0 +1,40 @@
+{
+  "code": "600887.SH",
+  "name": "伊利股份",
+  "as_of": "2026-11-26",
+  "period": "FY2025",
+  "documents": [
+    {
+      "file": "company-analysis.md",
+      "sections": [
+        "一页纸",
+        "生意拆解",
+        "行业与竞争位次",
+        "会计质量体检",
+        "财务表现与回报",
+        "治理与股东回报",
+        "风险与跟踪清单"
+      ]
+    },
+    {
+      "file": "valuation.md",
+      "sections": [
+        "一页纸",
+        "能不能估值",
+        "历史基本面还原",
+        "三法交叉",
+        "假设与敏感性",
+        "情景与概率加权",
+        "结论与纪律"
+      ]
+    }
+  ],
+  "charts": [],
+  "evidence_count": 687,
+  "gap_count": 20,
+  "red_flags": {
+    "triggered": 2,
+    "insufficient": 21,
+    "total": 33
+  }
+}
