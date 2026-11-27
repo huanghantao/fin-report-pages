@@ -1,6 +1,7 @@
 ---
 /** 站点外壳：头部、页脚、全局样式。 */
 import "../styles/global.css";
+import CompanySearch from "../components/CompanySearch.astro";
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const { title, description } = Astro.props;
@@ -29,6 +30,7 @@ const { title, description } = Astro.props;
       <div class="masthead__inner">
         <a class="masthead__brand" href={`${base}/`}>财报研究</a>
         <span class="masthead__note">逐页读原文 · 挖附注 · 留台账</span>
+        <CompanySearch />
       </div>
     </header>
     <main>

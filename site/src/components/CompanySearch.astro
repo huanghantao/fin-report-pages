@@ -1,0 +1,278 @@
+---
+/**
+ * 找公司。
+ *
+ * 不是全文检索：读者来这里是为了「有没有某家公司的报告」，所以按公司名、代码、
+ * 报告期来找，命中的是一条**公司**，点进去就是它的报告。
+ *
+ * 索引在构建时从内容集合生成，内联成一段 JSON。一家公司几十字节，五百家也就
+ * 二十几 KB；比起为搜索单独托管一个索引服务，这样既不增加运行时依赖，也不会
+ * 让页面多一次网络往返。
+ */
+import { getCollection } from "astro:content";
+import aliasTable from "../data/aliases.json";
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+const companies = (await getCollection("reports")).map((entry) => {
+  const { code, name, asOf, period, redFlags } = entry.data;
+  const [ticker, market = ""] = code.split(".");
+  return {
+    id: entry.id,
+    href: `${base}/${entry.id}/`,
+    code,
+    name,
+    asOf,
+    period,
+    // 交易所短的三个：显示成徽章，也参与匹配——有人只记得「600887」不记得后缀
+    ticker,
+    market,
+    flags: redFlags.triggered,
+    // 别名：读者搜「可乐」时想找的是中国食品，搜「中粮」也是。
+    // 光靠代码和全称，只有确切知道公司叫什么的人才找得到。
+    aliases: aliasTable[code] ?? [],
+  };
+});
+
+// 建索引时按报告期倒序：打开面板第一眼看到的是最新的一份。
+companies.sort((a, b) => b.asOf.localeCompare(a.asOf) || a.code.localeCompare(b.code));
+
+const payload = JSON.stringify(companies).replace(/</g, "\\u003c");
+---
+
+<div class="search" data-company-search>
+  <button class="search__trigger" type="button" data-picker-open aria-label="找公司">
+    <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" fill="none">
+      <circle cx="6.6" cy="6.6" r="4.6" stroke="currentColor" stroke-width="1.6"></circle>
+      <path d="M10.2 10.2 14 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
+    </svg>
+    <span>找公司</span>
+    <kbd data-picker-key>⌘K</kbd>
+  </button>
+
+  <dialog class="search__dialog" data-picker-dialog aria-label="找公司">
+    <div class="search__panel">
+      <div class="search__field">
+        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" fill="none">
+          <circle cx="6.6" cy="6.6" r="4.6" stroke="currentColor" stroke-width="1.6"></circle>
+          <path d="M10.2 10.2 14 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+      ></path>
+        </svg>
+        <input
+          class="search__input"
+          type="search"
+          data-picker-input
+          placeholder="公司名或代码，例如 伊利 / 600887 / 00506"
+          autocomplete="off"
+          autocorrect="off"
+          spellcheck="false"
+          aria-controls="picker-results"
+        />
+        <button class="search__close" type="button" data-picker-close aria-label="关闭">Esc</button>
+      </div>
+      <div class="search__body">
+        <ul class="search__results" id="picker-results" data-picker-results role="listbox"></ul>
+        <p class="search__message" data-picker-message hidden></p>
+      </div>
+      <div class="search__foot" data-picker-foot>
+        <span data-picker-count></span>
+        <span class="search__keys"><kbd>↑</kbd><kbd>↓</kbd> 选择 <kbd>↵</kbd> 打开</span>
+      </div>
+    </div>
+  </dialog>
+</div>
+
+<script type="application/json" data-picker-index set:html={payload}></script>
+
+<script>
+  const root = document.querySelector("[data-company-search]");
+  const dialog = root.querySelector("[data-picker-dialog]");
+  const input = root.querySelector("[data-picker-input]");
+  const list = root.querySelector("[data-picker-results]");
+  const message = root.querySelector("[data-picker-message]");
+  const keyHint = root.querySelector("[data-picker-key]");
+  const foot = root.querySelector("[data-picker-foot]");
+  const countEl = root.querySelector("[data-picker-count]");
+  const indexEl = document.querySelector("[data-picker-index]");
+
+  const companies = JSON.parse(indexEl.textContent);
+  const isMac = /Mac|iPhone|iPad/.test(navigator.platform);
+  keyHint.textContent = isMac ? "⌘K" : "Ctrl K";
+
+  let active = -1;
+  let shown = [];
+
+  /**
+   * 匹配规则：空格分开的每一段都要命中（顺序不限）。
+   *
+   * 「伊利 600887」这种输入如果整串当子串去找，永远匹配不上；拆成词各自命中
+   * 才符合读者「我在同时用名字和代码缩小范围」的意图。
+   */
+  function matches(company, tokens) {
+    const haystack = [
+      company.name,
+      company.code,
+      company.ticker,
+      company.period,
+      ...company.aliases,
+    ]
+      .join(" ")
+      .toLowerCase();
+    return tokens.every((token) => haystack.includes(token));
+  }
+
+  /** 名字里命中的那段加粗，让人一眼看出为什么这条会出现。 */
+  function nameNode(company, query) {
+    const span = document.createElement("span");
+    span.className = "search__name";
+    const needle = query.trim().toLowerCase();
+    const at = needle && company.name.toLowerCase().indexOf(needle);
+    if (at === undefined || at < 0) {
+      span.textContent = company.name;
+      return span;
+    }
+    span.append(company.name.slice(0, at));
+    const mark = document.createElement("mark");
+    mark.textContent = company.name.slice(at, at + needle.length);
+    span.append(mark, company.name.slice(at + needle.length));
+    return span;
+  }
+
+  function highlight(index) {
+    active = index;
+    [...list.children].forEach((li, i) => {
+      li.classList.toggle("is-active", i === index);
+      li.setAttribute("aria-selected", String(i === index));
+    });
+    const item = list.children[index];
+    if (item) item.scrollIntoView({ block: "nearest" });
+  }
+
+  function row(company, query) {
+    const li = document.createElement("li");
+    li.className = "search__result";
+    li.setAttribute("role", "option");
+    li.dataset.href = company.href;
+
+    const link = document.createElement("a");
+    link.href = company.href;
+
+    const head = document.createElement("div");
+    head.className = "search__head";
+
+    const name = nameNode(company, query);
+
+    const meta = document.createElement("div");
+    meta.className = "search__meta";
+
+    const code = document.createElement("span");
+    code.className = "search__code";
+    code.textContent = company.code;
+
+    const period = document.createElement("span");
+    period.className = "search__period";
+    period.textContent = `${company.period} 年报`;
+
+    meta.append(code, period);
+
+    head.append(name, meta);
+
+    if (company.flags > 0) {
+      const flag = document.createElement("span");
+      flag.className = "search__flag";
+      flag.textContent = `红旗 ${company.flags}`;
+      head.append(flag);
+    }
+
+    link.append(head);
+    li.append(link);
+    li.addEventListener("mousemove", () => {
+      if (active !== [...list.children].indexOf(li)) highlight([...list.children].indexOf(li));
+    });
+    return li;
+  }
+
+  function render(query) {
+    const tokens = query.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    shown = tokens.length ? companies.filter((c) => matches(c, tokens)) : companies;
+
+    active = -1;
+    list.replaceChildren(...shown.map((company) => row(company, tokens[0] ?? "")));
+
+    foot.hidden = !shown.length;
+    countEl.textContent = shown.length === companies.length
+      ? `收录 ${companies.length} 家`
+      : `${shown.length} / ${companies.length} 家`;
+
+    if (shown.length) {
+      message.hidden = true;
+      message.textContent = "";
+      return;
+    }
+    message.hidden = false;
+    // 说清楚「没有」指的是**这个站**没有，不是这家公司不存在——
+    // 读者很容易把两者混为一谈。
+    message.textContent = companies.length
+      ? `这个站还没收录「${query.trim()}」的报告，目前有 ${companies.length} 家。`
+      : "还没有收录任何报告。";
+  }
+
+  function openPicker() {
+    if (!dialog.open) dialog.showModal();
+    render(input.value);
+    input.focus();
+    input.select();
+  }
+
+  function closePicker() {
+    if (dialog.open) dialog.close();
+  }
+
+  input.addEventListener("input", () => render(input.value));
+
+  input.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      // <input type="search"> 会把 Esc 拿去掉自己清空输入框，原生 <dialog> 收不到。
+      event.preventDefault();
+      closePicker();
+      return;
+    }
+    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+      event.preventDefault();
+      if (!shown.length) return;
+      const delta = event.key === "ArrowDown" ? 1 : -1;
+      highlight((active + delta + shown.length) % shown.length);
+      return;
+    }
+    if (event.key === "Enter") {
+      event.preventDefault();
+      const target = list.children[active >= 0 ? active : 0];
+      if (target) window.location.href = target.dataset.href;
+    }
+  });
+
+  root.querySelector("[data-picker-open]").addEventListener("click", openPicker);
+  root.querySelector("[data-picker-close]").addEventListener("click", closePicker);
+
+  // 点遮罩关闭：点在面板外面时事件目标才是 <dialog> 本身
+  dialog.addEventListener("click", (event) => {
+    if (event.target === dialog) closePicker();
+  });
+
+  document.addEventListener("keydown", (event) => {
+    const typing =
+      event.target instanceof HTMLElement &&
+      (event.target.isContentEditable ||
+        ["INPUT", "TEXTAREA", "SELECT"].includes(event.target.tagName));
+
+    if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+      event.preventDefault();
+      dialog.open ? closePicker() : openPicker();
+      return;
+    }
+    if (event.key === "/" && !typing && !dialog.open) {
+      event.preventDefault();
+      openPicker();
+    }
+  });
+</script>

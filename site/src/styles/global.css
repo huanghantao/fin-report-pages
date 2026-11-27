@@ -121,6 +121,221 @@ a:hover {
   margin-left: auto;
 }
 
+/* ── 搜索 ─────────────────────────────────────────────────── */
+
+.search__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  background: var(--bg-raised);
+  border: 1px solid var(--rule-strong);
+  border-radius: 0.35rem;
+  padding: 0.28rem 0.5rem 0.28rem 0.55rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.search__trigger:hover {
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+
+.search__trigger kbd {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-faint);
+  background: var(--bg-sunken);
+  border: 1px solid var(--rule);
+  border-radius: 0.2rem;
+  padding: 0.05rem 0.3rem;
+  line-height: 1.4;
+}
+
+.search__dialog {
+  margin: 0 auto;
+  padding: 0;
+  border: none;
+  background: transparent;
+  max-width: min(42rem, calc(100vw - 2rem));
+  width: 100%;
+  /* 定位在视口上方三分之一：读者眼睛在上半屏，弹在正中反而要回头找 */
+  margin-top: 12vh;
+}
+
+.search__dialog::backdrop {
+  background: color-mix(in srgb, var(--ink) 32%, transparent);
+  backdrop-filter: blur(3px);
+}
+
+.search__panel {
+  background: var(--bg-raised);
+  border: 1px solid var(--rule-strong);
+  border-radius: 0.6rem;
+  box-shadow: 0 24px 60px -24px color-mix(in srgb, var(--ink) 55%, transparent);
+  overflow: hidden;
+}
+
+.search__field {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--rule);
+  color: var(--ink-faint);
+}
+
+.search__input {
+  flex: 1;
+  font: inherit;
+  font-size: 1rem;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--ink);
+  min-width: 0;
+}
+
+.search__input::placeholder {
+  color: var(--ink-faint);
+}
+
+.search__input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.search__close {
+  font: inherit;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-faint);
+  background: var(--bg-sunken);
+  border: 1px solid var(--rule);
+  border-radius: 0.2rem;
+  padding: 0.1rem 0.35rem;
+  cursor: pointer;
+}
+
+.search__close:hover {
+  color: var(--accent-ink);
+  border-color: var(--accent);
+}
+
+.search__body {
+  max-height: min(60vh, 30rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.search__message {
+  margin: 0;
+  padding: 2rem 1rem;
+  text-align: center;
+  font-size: 0.88rem;
+  color: var(--ink-faint);
+}
+
+.search__message[hidden] {
+  display: none;
+}
+
+.search__results {
+  list-style: none;
+  margin: 0;
+  padding: 0.35rem;
+}
+
+.search__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 0.9rem;
+  border-top: 1px solid var(--rule);
+  font-size: 0.74rem;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.search__foot[hidden] {
+  display: none;
+}
+
+.search__keys kbd {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--ink-faint);
+  background: var(--bg-sunken);
+  border: 1px solid var(--rule);
+  border-radius: 0.2rem;
+  padding: 0 0.25rem;
+  margin-left: 0.25rem;
+}
+
+.search__result a {
+  display: block;
+  padding: 0.62rem 0.8rem;
+  border-radius: 0.35rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.search__result.is-active a {
+  background: var(--accent-soft);
+}
+
+/* 一条 = 一行公司。名字在左、代码与报告期在右，红旗只给命中的公司一个角标 */
+.search__head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.7rem;
+  min-width: 0;
+}
+
+.search__name {
+  font-size: 0.96rem;
+  font-weight: 650;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.search__meta {
+  margin-left: auto;
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  font-size: 0.78rem;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.search__code {
+  font-family: var(--mono);
+  color: var(--ink-soft);
+}
+
+.search__flag {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--accent-ink);
+  background: var(--accent-soft);
+  border-radius: 0.2rem;
+  padding: 0.05rem 0.35rem;
+  white-space: nowrap;
+}
+
+.search__name mark {
+  background: color-mix(in srgb, #f59e0b 40%, transparent);
+  color: var(--ink);
+  border-radius: 0.15rem;
+  padding: 0 0.1em;
+}
+
 /* ── 首页 ─────────────────────────────────────────────────── */
 
 .hero {
@@ -285,6 +500,29 @@ a:hover {
   gap: 4rem;
   justify-content: center;
   align-items: start;
+}
+
+@media (max-width: 34rem) {
+  /* 窄屏上「逐页读原文 · 挖附注 · 留台账」挤掉搜索框，它只是个装饰句 */
+  .masthead__note {
+    display: none;
+  }
+  /* margin-left 要加在 .search 上：它是 .masthead__inner 的 flex 子元素，
+     加在里面的按钮上推不动任何东西。 */
+  .search {
+    margin-left: auto;
+  }
+  .search__trigger span {
+    display: none;
+  }
+}
+
+/* 触屏没有物理键盘，快捷键提示摆在那儿只是占地方 */
+@media (hover: none) {
+  .search__trigger kbd,
+  .search__keys {
+    display: none;
+  }
 }
 
 @media (max-width: 68rem) {
