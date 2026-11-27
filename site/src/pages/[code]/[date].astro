@@ -34,7 +34,7 @@ const toc = headings.filter((heading) => heading.depth === 2 || heading.depth ==
         <div class="report__lede">数据快照日 {asOf}</div>
         <div class="report__badges">
           {
-            reading.pages > 0 && <span class="badge">{reading.pages} 页读完</span>
+            reading.pagesRead > 0 && <span class="badge">{reading.pagesRead} 页读完</span>
           }
           {
             reading.judgements > 0 && <span class="badge">{reading.judgements} 条判断</span>
