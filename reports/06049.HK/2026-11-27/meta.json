@@ -46,19 +46,19 @@
     "chunks_read": 12,
     "pages": 171,
     "pages_read": 168,
-    "claims": 121,
-    "judgements": 87,
+    "claims": 120,
+    "judgements": 86,
     "questions": 111
   },
   "notes": {
     "topics": 32,
-    "selected": 16
+    "selected": 11
   },
-  "evidence_count": 241,
+  "evidence_count": 243,
   "gap_count": 251,
   "red_flags": {
     "triggered": 0,
-    "insufficient": 17,
+    "insufficient": 8,
     "total": 32
   }
 }
