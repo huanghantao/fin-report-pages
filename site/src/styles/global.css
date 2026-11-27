@@ -714,19 +714,41 @@ a:hover {
 
 /* 表格：报告的主角。数字右对齐、等宽、单位不重复进单元格 */
 
+/* 滚动容器由构建期的 rehype 插件套上（见 astro.config.mjs 的 wrapTables）。
+   表格本身保持 display: table 并铺满宽度，列少时不会缩在左边留一片空白。 */
+.table-wrap {
+  margin: 1.5rem 0 1.8rem;
+  overflow-x: auto;
+  border: 1px solid var(--rule);
+  border-radius: 0.35rem;
+  /* 四层背景叠出「右边还有内容」的渐隐：
+     前两层是盖住阴影的实色，后两层才是阴影本身。关键在于
+     background-attachment 的 local / scroll 搭配——local 跟着内容走、
+     scroll 跟着容器走，两者错位时阴影才会露出来，滚到头就自动消失。
+     这样只在真的能横向滚动时才提示，不用 JS 判断。 */
+  background:
+    linear-gradient(to right, var(--bg-raised) 40%, transparent) left center,
+    linear-gradient(to left, var(--bg-raised) 40%, transparent) right center,
+    radial-gradient(farthest-side at 0 50%, color-mix(in srgb, var(--ink) 28%, transparent), transparent)
+      left center,
+    radial-gradient(farthest-side at 100% 50%, color-mix(in srgb, var(--ink) 28%, transparent), transparent)
+      right center;
+  background-repeat: no-repeat;
+  background-size: 2.5rem 100%, 2.5rem 100%, 0.8rem 100%, 0.8rem 100%;
+  background-attachment: local, local, scroll, scroll;
+}
+
 .prose table {
   width: 100%;
   border-collapse: collapse;
-  margin: 1.5rem 0 1.8rem;
   font-size: 0.86rem;
   font-variant-numeric: tabular-nums;
-  background: var(--bg-raised);
-  border: 1px solid var(--rule);
-  border-radius: 0.35rem;
-  overflow: hidden;
-  display: block;
-  overflow-x: auto;
   white-space: nowrap;
+}
+
+/* 长句表格允许折行，否则横向撑到两倍宽 */
+.table-wrap.is-text table {
+  white-space: normal;
 }
 
 .prose thead {
@@ -822,6 +844,9 @@ a:hover {
   .footer {
     display: none;
   }
+  .table-wrap {
+    overflow: visible;
+  }
   body {
     background: #fff;
     font-size: 11pt;
@@ -832,7 +857,6 @@ a:hover {
   }
   .prose table {
     white-space: normal;
-    display: table;
   }
   .prose h2 {
     break-after: avoid;
