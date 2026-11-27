@@ -7,3 +7,7 @@ site/.astro/
 .DS_Store
 __pycache__/
 .venv/
+
+# pnpm 尝试安装依赖时自动生成，本项目用 npm
+site/pnpm-lock.yaml
+site/pnpm-workspace.yaml
