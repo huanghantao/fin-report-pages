@@ -54,11 +54,11 @@
     "topics": 96,
     "selected": 60
   },
-  "evidence_count": 318,
+  "evidence_count": 332,
   "gap_count": 86,
   "red_flags": {
-    "triggered": 3,
-    "insufficient": 17,
+    "triggered": 4,
+    "insufficient": 15,
     "total": 32
   }
 }
