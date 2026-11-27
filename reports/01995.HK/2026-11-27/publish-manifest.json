@@ -1,0 +1,19 @@
+{
+  "contract": "report-manifest",
+  "code": "01995.HK",
+  "name": "永升服务",
+  "as_of": "2026-11-27",
+  "path": "reports/01995.HK/2026-11-27",
+  "files": [
+    "company-analysis.md",
+    "meta.json",
+    "assets/cash-quality.png",
+    "assets/expense-mix.png",
+    "assets/margin-trend.png",
+    "assets/revenue-profit.png",
+    "assets/turnover-days.png"
+  ],
+  "gates": {
+    "G5": "pass"
+  }
+}
