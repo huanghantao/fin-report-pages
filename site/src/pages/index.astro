@@ -5,8 +5,18 @@ import { getCollection } from "astro:content";
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 
-const reports = (await getCollection("reports")).sort(
-  (a, b) => b.data.asOf.localeCompare(a.data.asOf) || a.data.code.localeCompare(b.data.code),
+// 一家公司只出一张卡，取最新的那份快照。
+//
+// 同一份年报重跑一次就多一个日期目录（快照日属于报告，见发布侧的 `_snapshot_date`），
+// 目录里留着是为了能按 URL 回看，但首页不该给同一家公司摆两张几乎一样的卡——读者会以为
+// 读了两份，或者以为读了两年的年报。旧快照仍可按 `/<代码>/<快照日>/` 直达。
+const latest = new Map();
+for (const item of await getCollection("reports")) {
+  const current = latest.get(item.data.code);
+  if (!current || item.data.asOf > current.data.asOf) latest.set(item.data.code, item);
+}
+const reports = [...latest.values()].sort((a, b) =>
+  b.data.asOf.localeCompare(a.data.asOf) || a.data.code.localeCompare(b.data.code),
 );
 
 // 首页的统计按「所有报告」汇总，而不是按份数平均——读者关心的是总量。
