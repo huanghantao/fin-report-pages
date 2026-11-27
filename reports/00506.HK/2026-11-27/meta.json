@@ -42,13 +42,13 @@
     }
   ],
   "reading": {
-    "chunks": 0,
-    "chunks_read": 0,
-    "pages": 0,
-    "pages_read": 0,
-    "claims": 0,
-    "judgements": 0,
-    "questions": 0
+    "chunks": 23,
+    "chunks_read": 23,
+    "pages": 203,
+    "pages_read": 200,
+    "claims": 204,
+    "judgements": 78,
+    "questions": 117
   },
   "notes": {
     "topics": 37,
