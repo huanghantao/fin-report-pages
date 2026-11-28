@@ -1,0 +1,18 @@
+{
+  "contract": "report-manifest",
+  "code": "600519.SH",
+  "name": "贵州茅台",
+  "as_of": "2026-11-28",
+  "path": "reports/600519.SH/2026-11-28",
+  "files": [
+    "company-analysis.md",
+    "meta.json",
+    "assets/cash-quality.png",
+    "assets/expense-mix.png",
+    "assets/margin-trend.png",
+    "assets/turnover-days.png"
+  ],
+  "gates": {
+    "G5": "pass"
+  }
+}
