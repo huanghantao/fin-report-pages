@@ -21,10 +21,6 @@
   ],
   "charts": [
     {
-      "path": "assets/revenue-profit.png",
-      "title": "收入与利润：增长的含金量如何"
-    },
-    {
       "path": "assets/margin-trend.png",
       "title": "三率趋势：盈利能力在变好还是变差"
     },
@@ -54,8 +50,8 @@
     "topics": 38,
     "selected": 11
   },
-  "evidence_count": 230,
-  "gap_count": 71,
+  "evidence_count": 254,
+  "gap_count": 67,
   "red_flags": {
     "triggered": 2,
     "insufficient": 11,
