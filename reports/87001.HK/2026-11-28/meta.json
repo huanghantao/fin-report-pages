@@ -1,0 +1,48 @@
+{
+  "code": "87001.HK",
+  "name": "汇贤产业信托",
+  "as_of": "2026-11-28",
+  "period": "FY2025",
+  "documents": [
+    {
+      "file": "company-analysis.md",
+      "sections": [
+        "一页纸",
+        "生意：资产包怎么收租",
+        "五年账",
+        "分派表：从物业收入净额到每单位分派",
+        "资产负债表：资产在哪、借了多少",
+        "现金流量表：分派的钱从哪来",
+        "附注深挖",
+        "谁在分钱",
+        "红旗与跟踪清单"
+      ]
+    }
+  ],
+  "charts": [
+    {
+      "path": "assets/revenue-profit.png",
+      "title": "收入与利润：增长的含金量如何"
+    }
+  ],
+  "reading": {
+    "chunks": 16,
+    "chunks_read": 16,
+    "pages": 232,
+    "pages_read": 229,
+    "claims": 247,
+    "judgements": 126,
+    "questions": 109
+  },
+  "notes": {
+    "topics": 29,
+    "selected": 11
+  },
+  "evidence_count": 253,
+  "gap_count": 73,
+  "red_flags": {
+    "triggered": 2,
+    "insufficient": 10,
+    "total": 32
+  }
+}

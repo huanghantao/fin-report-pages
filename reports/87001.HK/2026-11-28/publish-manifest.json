@@ -1,0 +1,15 @@
+{
+  "contract": "report-manifest",
+  "code": "87001.HK",
+  "name": "汇贤产业信托",
+  "as_of": "2026-11-28",
+  "path": "reports/87001.HK/2026-11-28",
+  "files": [
+    "company-analysis.md",
+    "meta.json",
+    "assets/revenue-profit.png"
+  ],
+  "gates": {
+    "G5": "pass"
+  }
+}
