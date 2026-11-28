@@ -1,0 +1,18 @@
+{
+  "contract": "report-manifest",
+  "code": "06049.HK",
+  "name": "保利物业",
+  "as_of": "2026-11-28",
+  "path": "reports/06049.HK/2026-11-28",
+  "files": [
+    "company-analysis.md",
+    "meta.json",
+    "assets/cash-quality.png",
+    "assets/expense-mix.png",
+    "assets/margin-trend.png",
+    "assets/turnover-days.png"
+  ],
+  "gates": {
+    "G5": "pass"
+  }
+}
